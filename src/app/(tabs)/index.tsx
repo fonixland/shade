@@ -1,9 +1,16 @@
 import { ProductCard } from "@/components/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
+import type { Product } from "@/components/ProductCard";
+import { useCallback } from "react";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 export default function Shop() {
   const { data, isPending, isError, error } = useProducts();
+  const renderItem = useCallback(
+    ({ item }: { item: Product }) => <ProductCard product={item} />,
+    []
+  );
 
   if (isPending) {
     return (
@@ -22,10 +29,10 @@ export default function Shop() {
   }
 
   return (
-    <FlatList
+    <FlashList
       data={data}
       keyExtractor={(p) => p.id}
-      renderItem={({ item }) => <ProductCard product={item} />}
+      renderItem={renderItem}
     />
   );
 }
