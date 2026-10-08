@@ -2,14 +2,31 @@ import type { Product } from "@/components/ProductCard";
 import { ProductCard } from "@/components/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import { FlashList } from "@shopify/flash-list";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+
+const toggled = (prev: Set<string>, id: string) => {
+  const next = new Set(prev);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  return next;
+};
 
 export default function Shop() {
   const { data, isPending, isError, error } = useProducts();
-  const renderItem = useCallback(
-    ({ item }: { item: Product }) => <ProductCard product={item} />,
+  const [favorites, setFavorites] = useState<Set<string>>(() => new Set());
+
+  // Step 3 "after": one stable callback; only the tapped row's isFavorite changes,
+  // so memo skips every other ProductCard.
+  const toggleFavorite = useCallback(
+    (id: string) => setFavorites((prev) => toggled(prev, id)),
     []
+  );
+  const renderItem = useCallback(
+    ({ item }: { item: Product }) => (
+      <ProductCard product={item} isFavorite={favorites.has(item.id)} onFavorite={toggleFavorite} />
+    ),
+    [favorites, toggleFavorite]
   );
 
   // Session 2.2 Full: 1,000 local rows so we measure the list, not the network
