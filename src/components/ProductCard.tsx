@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 export type Product = {
   id: string;
@@ -17,21 +18,34 @@ type Props = {
 
 export const ProductCard = memo(function ProductCard({ product, isFavorite = false, onFavorite }: Props) {
   console.log("render ProductCard", product.id);
+
+  // Session 2.3: a shared value is NOT state -- writing it never re-renders.
+  // The useAnimatedStyle arrow is a worklet; it runs on the UI thread.
+  const scale = useSharedValue(1);
+  const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
   return (
     <Link href={{ pathname: `/product/[id]`, params: { id: product.id } }} asChild>
-      <Pressable style={styles.card} accessibilityRole="button" accessibilityLabel={`${product.name}, $${product.price.toFixed(2)}`}>
-        <View style={styles.info}>
-          <Text style={styles.name}>{product.name}</Text>
-          <Text>${product.price.toFixed(2)}</Text>
-        </View>
-        <Pressable
-          onPress={() => onFavorite?.(product.id)}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
-        >
-          <Text style={styles.heart}>{isFavorite ? "♥" : "♡"}</Text>
-        </Pressable>
+      <Pressable
+        onPressIn={() => (scale.value = withSpring(0.95))}
+        onPressOut={() => (scale.value = withSpring(1))}
+        accessibilityRole="button"
+        accessibilityLabel={`${product.name}, $${product.price.toFixed(2)}`}
+      >
+        <Animated.View style={[styles.card, pressStyle]}>
+          <View style={styles.info}>
+            <Text style={styles.name}>{product.name}</Text>
+            <Text>${product.price.toFixed(2)}</Text>
+          </View>
+          <Pressable
+            onPress={() => onFavorite?.(product.id)}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Text style={styles.heart}>{isFavorite ? "♥" : "♡"}</Text>
+          </Pressable>
+        </Animated.View>
       </Pressable>
     </Link>
   );
@@ -43,6 +57,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "white",
   },
   info: {
     flex: 1,
