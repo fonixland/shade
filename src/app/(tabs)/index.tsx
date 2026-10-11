@@ -3,7 +3,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 
 const toggled = (prev: Set<string>, id: string) => {
   const next = new Set(prev);
@@ -11,6 +11,21 @@ const toggled = (prev: Set<string>, id: string) => {
   else next.add(id);
   return next;
 };
+
+// Session 2.3 Done-when: the Day 1 heavy button. Freezes the JS thread for a
+// second or two. Press-hold a card and tap this: the Reanimated spring keeps
+// running, because its worklet lives on the UI thread, not the JS thread.
+const blockJsThread = () => {
+  let n = 0;
+  for (let i = 0; i < 50_000_000; i++) n += i;
+  console.log("heavy JS done", n);
+};
+
+const HeavyButton = () => (
+  <Pressable onPress={blockJsThread} style={styles.heavy}>
+    <Text style={styles.heavyText}>Block the JS thread (50M loop)</Text>
+  </Pressable>
+);
 
 export default function Shop() {
   const { data, isPending, isError, error } = useProducts();
@@ -22,6 +37,7 @@ export default function Shop() {
     (id: string) => setFavorites((prev) => toggled(prev, id)),
     []
   );
+
   const renderItem = useCallback(
     ({ item }: { item: Product }) => (
       <ProductCard product={item} isFavorite={favorites.has(item.id)} onFavorite={toggleFavorite} />
@@ -62,10 +78,13 @@ export default function Shop() {
       data={bigList}
       keyExtractor={(p) => p.id}
       renderItem={renderItem}
+      ListHeaderComponent={HeavyButton}
     />
   );
 }
 
 const styles = StyleSheet.create({
   center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 16 },
+  heavy: { margin: 12, padding: 14, borderRadius: 10, backgroundColor: "#b00020", alignItems: "center" },
+  heavyText: { color: "white", fontWeight: "600" },
 });
