@@ -61,6 +61,14 @@ export const ProductCard = memo(function ProductCard({ product, isFavorite = fal
             onPressOut={() => (scale.value = withSpring(1))}
             accessibilityRole="button"
             accessibilityLabel={`${product.name}, $${product.price.toFixed(2)}`}
+            // Session 2.4: the swipe is invisible to VoiceOver, so expose it as a
+            // custom action (VoiceOver: swipe up/down on the card, double-tap).
+            accessibilityActions={[
+              { name: "toggleFavorite", label: isFavorite ? "Remove from favorites" : "Add to favorites" },
+            ]}
+            onAccessibilityAction={(e) => {
+              if (e.nativeEvent.actionName === "toggleFavorite") toggleFavorite();
+            }}
           >
             <View>
               <Text style={styles.name}>{product.name}</Text>
