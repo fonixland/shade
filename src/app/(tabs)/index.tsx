@@ -22,7 +22,13 @@ const blockJsThread = () => {
 };
 
 const HeavyButton = () => (
-  <Pressable onPress={blockJsThread} style={styles.heavy}>
+  <Pressable
+    onPress={blockJsThread}
+    style={styles.heavy}
+    accessibilityRole="button"
+    accessibilityLabel="Block the JavaScript thread"
+    accessibilityHint="Debug only. Freezes the app for about two seconds."
+  >
     <Text style={styles.heavyText}>Block the JS thread (50M loop)</Text>
   </Pressable>
 );
