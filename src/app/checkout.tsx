@@ -23,7 +23,7 @@ export default function Checkout() {
       {FIELDS.map((label) => (
         <View key={label} style={styles.field}>
           <Text style={styles.label}>{label}</Text>
-          <TextInput style={styles.input} placeholder={label} />
+          <TextInput style={styles.input} placeholder={label} accessibilityLabel={label} />
         </View>
       ))}
     </KeyboardAwareScrollView>
