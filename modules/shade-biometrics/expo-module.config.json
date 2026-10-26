@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["ShadeBiometricsModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.shadebiometrics.ShadeBiometricsModule"]
+  }
+}
