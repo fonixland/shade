@@ -10,8 +10,7 @@
     "ios": {
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.bweakley.shade",
-      "appleTeamId": "2D8Z7KMSUA",
-      "infoPlist": { "NSFaceIDUsageDescription": "Unlock your Shade account with Face ID." } 
+      "appleTeamId": "2D8Z7KMSUA"
     },
     "android": {
       "adaptiveIcon": {
@@ -45,7 +44,8 @@
             "enableSceneSupport": true
           }
         }
-      ]
+      ],
+      [ './plugins/withFaceIdUsage', { reason: 'Unlock your Shade account with Face ID.' } ]
     ],
     "experiments": {
       "typedRoutes": true,
