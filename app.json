@@ -45,7 +45,8 @@
           }
         }
       ],
-      [ './plugins/withFaceIdUsage', { reason: 'Unlock your Shade account with Face ID.' } ]
+      ["./plugins/withFaceIdUsage", { "reason": "Unlock your Shade account with Face ID." }],
+      "./plugins/withAppGroup"
     ],
     "experiments": {
       "typedRoutes": true,
